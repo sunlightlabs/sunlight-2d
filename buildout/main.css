@@ -27,13 +27,14 @@ a.button { -moz-border-radius: 3px; -webkit-border-radius: 3px; background-color
 textarea { padding: 5px; width: 55%; font-size: 16px;}
 
 div#story { background-color: #F2E7CC; border: dashed 1px #E4B123; padding: 10px; -moz-border-radius: 3px; -webkit-border-radius: 3px; margin-bottom: 25px;}
-ol { list-style-type: decimal; margin-bottom: 10px; color: #E4B123; font-weight: bold; padding-left: 20px; font-size: 16px;}
+ol { list-style-type: decimal; color: #E4B123; font-weight: bold; padding-left: 20px; font-size: 16px;}
 ol span { font-weight: normal; color: #938A8A; font-size: 14px;}
 
 form { margin-top: 10px;}
 form li { margin-bottom: 8px;}
 label { display: block; margin-bottom: 5px; float: left; width: 20%; margin-right: 10px;}
-input, textarea { color: #A7A9AC; border: solid 1px #A7A9AC; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
+input {color: #A7A9AC;}
+textarea { border: solid 1px #A7A9AC; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
 span.formHelper { display: block; color: #A7A9AC; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; margin-right: 5px; float: left;}
 
 span.tip { color: #E03D05; font-weight: bold; text-transform: uppercase;}

@@ -41,4 +41,6 @@ span.formHelper { display: block; color: #A7A9AC; font-style: oblique; font-fami
 
 span.tip { color: #E03D05; font-weight: bold; text-transform: uppercase;}
 
+img { max-width: 300px;}
+
 .clear{ clear: both;}

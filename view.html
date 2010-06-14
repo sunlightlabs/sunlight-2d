@@ -1,9 +1,28 @@
 <html>
 <body>
-  {% if tag_id %}
-  <p> Thanks! Your tag was submitted with id {{ tag_id }}</p>
-  {% else %}
-  <p>There was a problem</p>
+  <div>Create a <a href="/">new tag</a></div>
+ <p> Thanks! Your tag was submitted</p>
+  {% if context.get('qr_url', None) %}
+  <div>
+    <img src="{{ context['qr_url'] }}" />
+  </div>
   {% end %}
+
+  <div>
+    <h2> Story</h2>
+    {% for item in context['tag_items'] %}
+ 
+    {% if item.get('body', None) %}
+    <p>{{ item['body'] }}</p>
+    {% end %}
+
+    {% if item.get('file', None) %}
+    Image:
+    <p><img src="{{ item['file'] }}"</p>    
+    {% end %}
+
+    {% end %}
+  </div>
+  
 </body>
 </html>

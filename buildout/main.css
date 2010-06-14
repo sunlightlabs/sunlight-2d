@@ -34,7 +34,7 @@ form { margin-top: 10px;}
 form li { margin-bottom: 8px;}
 label { display: block; margin-bottom: 5px; float: left; width: 35%; }
 input, textarea { color: #A7A9AC;}
-span.formHelper { display: block; color: #A7A9AC; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; margin-bottom: 5px;}
+span.formHelper { display: block; color: #A7A9AC; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; margin-right: 5px; float: left;}
 
 span.tip { color: #E03D05; font-weight: bold; text-transform: uppercase;}
 

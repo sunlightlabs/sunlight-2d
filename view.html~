@@ -1,0 +1,5 @@
+<html>
+<body>
+  <p> THanks! Your tag was submitted with id {{ saved_id }}
+</body>
+</html>

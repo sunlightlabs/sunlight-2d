@@ -5,7 +5,6 @@
 # and visit localhost:8888
 
 # fix files
-# todo add timestamp to each tag addition
 # add support for appending to a tag 
 
 
@@ -30,6 +29,10 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render('index.html')
 
+class UploadAPIHandler(tornado.web.RequestHandler):
+    def post(self):
+        pass
+
 class UploadHandler(tornado.web.RequestHandler):
     def post(self):
         context = {}
@@ -38,15 +41,11 @@ class UploadHandler(tornado.web.RequestHandler):
         form = self.request.arguments
         print 'Arguments were:'
         print form
-        print 'files'
+        print 'files submitted were:'
         print self.request.files
-        if self.request.files.get('file', None):
-            print 'file body'
-            print type(self.request.files['file'][0]['body'])
 
         # make sure the user submitted at least one of the fields:
         if self.get_argument('body', "") == "" and not self.request.files.get('file', None):
-            print 'no content'
             self.set_secure_cookie("message", "You must submit either a message or a file")
             self.redirect('/')
             return        
@@ -62,7 +61,7 @@ class UploadHandler(tornado.web.RequestHandler):
 
         # save it to the db and create a uri for the content
         try:
-            print 'newtag'
+            print 'newtag will be created with the following information'
             print newtag
             tag_id = self.db_save(newtag)
             context['tag_id'] = tag_id
@@ -73,20 +72,13 @@ class UploadHandler(tornado.web.RequestHandler):
             return
 
         # generate a qr code with the uri
-        uri = self.generate_uri(tag_id)
-        qrcode = create_qr(uri)
-        print qrcode
-        context['qr_url'] = qrcode
+        context['qr_url'] = create_qr(tag_uri(tag_id))
 
         # send the qr code to printer
 
         # show the user their newly created tag
         self.redirect('/tag/%s' % str(tag_id))
             
-    def generate_uri(self, tag_id):
-        uri = settings['root_url'].strip('/') + '/' + str(tag_id)
-        return uri
-
     def db_save(self, thistag):
         db = pymongo.Connection()[settings['database']]
 
@@ -112,6 +104,10 @@ class UploadHandler(tornado.web.RequestHandler):
         db.connection.disconnect()
         return _id
 
+def tag_uri(tag_id):
+    uri = settings['root_url'].strip('/') + '/tag/' + str(tag_id)
+    return uri
+
 def create_qr(uri):        
     args = {
         'chs' : '%dx%d' % (settings['qrx'], settings['qry']),
@@ -123,12 +119,25 @@ def create_qr(uri):
 
 class ViewHandler(tornado.web.RequestHandler):
     def get(self, tag_id):        
-        print 'retrieving view info for tag_id %s' % tag_id
-        context = { 'qr_url' : create_qr(tag_id) }
-        table = pymongo.Connection()[settings['database']][settings['table']]
-        print table.count()
-        oid = pymongo.objectid.ObjectId(tag_id)
-        record = table.find_one({'_id': oid})
+        print 'retrieving view info for tag_id %s' % tag_id        
+        context = { 'qr_url' : create_qr(tag_uri(tag_id)) }
+        table = pymongo.Connection()[settings['database']][settings['table']]        
+
+        try:
+            oid = pymongo.objectid.ObjectId(tag_id)
+            record = table.find_one({'_id': oid})
+            if not record:
+                print 'no record with the id %s' % tag_id
+                raise Exception
+            else:
+                print 'tag record retrieved'
+                print record
+        except BaseException, e:
+            print 'there was an error retrieving the record'
+            print e
+            self.write('''No tag by that name. Perhaps you'd like to <a href="/">create a new one</a>?''')
+            return            
+
         if record.get('file', None):
             gfs = GridFS(db)
             filebody = gfs.get(record.get('file'))  
@@ -147,6 +156,7 @@ settings = {
 application = tornado.web.Application([
         (r'/', MainHandler),
         (r'/upload', UploadHandler),
+        (r'/upload.json', UploadAPIHandler),
         (r'/tag/([\w]+)', ViewHandler),
         ], cookie_secret="pYqy/FIEQKiXs/2XOlFMQ+GojmHkkUtnvxMxmifRxYA=", **settings)
 

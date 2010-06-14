@@ -23,6 +23,8 @@ body{
 
 h1 { font-size: 18px; font-weight: bold; border-bottom: 1px dashed #A7A9AC; margin-bottom: 20px; padding-bottom: 5px;}
 
+p { margin-bottom: 1em;}
+
 a.button { -moz-border-radius: 3px; -webkit-border-radius: 3px; background-color: #E03D05; padding: 10px 10px 8px; text-decoration: none; display: block; color: #fff; text-transform: uppercase; text-align: center; width: 140px; border:1px dashed #FCFAFA; font-weight: bold; margin-top: 25px;}
 textarea { padding: 5px; width: 97%; font-size: 16px;}
 

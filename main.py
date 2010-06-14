@@ -107,7 +107,8 @@ class UploadHandler(tornado.web.RequestHandler):
 
 class APIUploadHandler(UploadHandler):
     def post_processing(self, tag_id):
-        # return the uri to the app
+        ''' returns a json object with the tag/story contents'''
+
         record = get_record(self, tag_id)        
 
         # make the record json-able
@@ -118,7 +119,6 @@ class APIUploadHandler(UploadHandler):
             item['created'] = item['created'].strftime("%Y/%m/%d %H:%M:%S")
             items.append(item)
         record['contents'] = items
-        #response = {'tag_id' : str(tag_id)}
         print 'will send response:'
         print record
         self.set_header("Content-Type", "application/json")

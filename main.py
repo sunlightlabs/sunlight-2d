@@ -51,11 +51,14 @@ class UploadHandler(tornado.web.RequestHandler):
             f.close()
             thistag['file'] = file_url
 
-        # create 'body' as a list; there might be more body
-        # elements added if multiple people edit the same tag
+        # create 'contents' as a list of items; people may append
+        # content to existing tags
         thistag['created'] = datetime.datetime.now()
         tag = {'contents': [thistag,],
-               'last_updated' : thistag['created']
+               # last_updated will be updated each time a new item is
+               # added to this story
+               'last_updated' : thistag['created'], 
+               'created' : thistag['created'],
                }        
         table = db[settings['table']]
         _id = table.insert(tag, safe=True)

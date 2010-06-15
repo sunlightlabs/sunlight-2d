@@ -121,7 +121,7 @@ def printqr(img_data):
     fp = open(tmpfile, 'w')
     fp.write(img_data)
     fp.close()
-    print_file = 'lp -d SUNLIGHT_LABEL_PRINTER -o someopt -o otheropt '.split() + [tmpfile]
+    print_file = 'lp -d SUNLIGHT_LABEL_PRINTER -o media=label '.split() + [tmpfile]
     subprocess.call(print_file)
     
 
@@ -210,8 +210,11 @@ class APIViewHandler(ViewHandler):
 # application settings here; private or local settings in
 # local_settings.py
 settings = {
-    'qrx' : 100,
-    'qry' : 100,
+    'qrx' : 100, #pixels
+    'qry' : 100, #pixels,
+    'labelx': 0, 
+    'labely': 0,
+    
 }    
 settings.update(local_settings)
 

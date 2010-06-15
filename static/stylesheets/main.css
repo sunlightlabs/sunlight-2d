@@ -49,7 +49,7 @@ a.moreLink { margin-top: 30px; font-size: 120%; font-family: Georgia, Times New 
 h2 { font-size: 220%; text-transform: uppercase; margin-bottom: 35px; color: #237e8e;}
 
 label { font-size: 120%; display: block; margin-bottom: 10px; float: left; width: 145px;}
-input, textarea { border: 1px dashed #d1cbc6; -moz-border-radius: 3px; -webkit-border-radius: 3px; width: 290px;}
+input, textarea { border: 1px dashed #d1cbc6; -moz-border-radius: 3px; -webkit-border-radius: 3px; width: 270px; padding: 10px;}
 
 button { margin-left: 145px; margin-top: 30px; text-indent: -9999em; display: block; border: none; cursor: pointer;}
 button.printBtn { width: 178px; height: 45px; background: url(/static/images/btn_print.png) top left no-repeat; }
@@ -58,6 +58,6 @@ button.printBtn { width: 178px; height: 45px; background: url(/static/images/btn
 
 ul li { margin-bottom: 15px;}
 
-.timestamp {float: right; font-size: 70%; font-style: oblique;}
+.timestamp { font-size: 80%; font-style: oblique; margin-top: 15px; text-decoration: none; display: block;}
 
 .clear{ clear: both;}

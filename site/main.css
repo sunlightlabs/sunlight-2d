@@ -1,0 +1,61 @@
+/*
+ * YUI Resect CSS version: 2.2.2 
+ * Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+ * Licensed under the BSD License: http://developer.yahoo.net/yui/license.txt
+ */
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,optgroup,button,p,blockquote,th,td{margin:0;padding:0;}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}table{border-collapse:collapse;border-spacing:0;}caption,th{text-align:left;}ol,ul{list-style:none;}fieldset,img{border:0;}input,textarea,select,optgroup,option,button{font-family:inherit;font-size:100%;}button,input {width: auto;overflow: visible;}optgroup,address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}q:before,q:after{content:'';}abbr,acronym {border:0;}
+dl li{list-style: none;}
+
+a:link {outline: none; color: #e25000;}
+a:visited {outline: none; color: #e25000}
+a:hover {outline: none; color: #e25000}
+a:active {outline: none; color: #e25000}
+
+body{
+	color:#706a67;
+	background: url(images/bg.jpg) top left repeat;
+	font-size: 80%;
+  	line-height: 21px;
+  	font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
+h1 { padding-top: 45px; width: 304px; height: 62px; position: relative;}
+h1 a { background: url(images/logo.png) top left no-repeat; display: block; text-indent: -9999em; width: 304px; height: 62px; }
+
+div#header, div#pageMain { width: 940px; margin: 0 auto; padding: 0 10px;}
+div#featureBoxWrapper { background: url(images/featureWrapper_bg.jpg) bottom left repeat-x;}
+div#featureBox { background: url(images/featureImg.jpg) top left no-repeat; width: 960px; height: 334px; margin: -20px auto 0;}
+div#featureBox ol { text-indent: -9999em; display: block; background: url(images/featureText.png) top left no-repeat; width: 545px; height: 156px; }
+div#wrapper { width: 545px; height: 156px; padding: 125px 0 0 400px;}
+
+body.story div#header { background: url(images/secondaryHeader.jpg) bottom left repeat-x; padding-bottom: 50px;}
+
+div#pageMain { padding-bottom: 80px; background: url(images/divider.png) top center repeat-y;}
+body.story div#pageMain { background: url(images/divider.png) 630px top repeat-y;}
+
+div#ltColumn { float: left; padding-right: 30px; width: 440px; padding-top: 50px;}
+div#rtColumn { float: left; margin-left: 30px; width: 440px; padding-top: 50px;}
+
+body.story div#ltColumn { width: 600px;}
+body.story div#rtColumn { width: 280px;}
+
+#recentList img{ max-width: 100px; border: 1px solid #b7b0aa; padding: 5px; margin-right: 20px; float: left;}
+#recentList li { padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px dashed #d1cbc6;}
+
+body.story img { border: 1px solid #b7b0aa; padding: 5px; margin-bottom: 20px; max-width: 500px;}
+
+a.moreLink { margin-top: 30px; font-size: 120%; font-family: Georgia, Times New Roman, Times, serif; font-style: oblique; background: url(images/arrows.png) left 4px no-repeat; padding-left: 20px;}
+
+h2 { font-size: 220%; text-transform: uppercase; margin-bottom: 35px; color: #237e8e;}
+
+label { font-size: 120%; display: block; margin-bottom: 10px; float: left; width: 145px;}
+input, textarea { border: 1px dashed #d1cbc6; -moz-border-radius: 3px; -webkit-border-radius: 3px; width: 290px;}
+
+button { margin-left: 145px; margin-top: 30px; text-indent: -9999em; display: block; border: none; cursor: pointer;}
+button.printBtn { width: 178px; height: 45px; background: url(images/btn_print.png) top left no-repeat; }
+
+.helperText { display: block; margin-bottom: 15px; font-size: 120%; font-family: Georgia, Times New Roman, Times, serif; font-style: oblique; color: #99938c;}
+
+ul li { margin-bottom: 15px;}
+
+.clear{ clear: both;}

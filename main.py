@@ -198,7 +198,7 @@ class WebViewHandler(ViewHandler):
         tag_id = str(record['_id'])
         context = { 'qr_url' : create_qr(tag_uri(tag_id)) }
         context['tag_items'] = record['contents']
-        self.render('view.html', context=context)        
+        self.render('templates/view.html', context=context)        
 
 class APIViewHandler(ViewHandler):
     def post_processing(self, record):

@@ -5,7 +5,7 @@
 # and visit localhost:8888
 
 # todo
-# recent stories
+# "see all" view (all qr codes)
 # add support for appending to existing tag/story
 # printing!
 # add timezone to datetime in response
@@ -28,7 +28,7 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         # get most recent stories
         tbl = pymongo.Connection()[settings['database']][settings['table']]
-        recent = [record for record in tbl.find({"last_updated": {"$exists": True}}).sort("last_updated", pymongo.DESCENDING).limit(10)]
+        recent = [record for record in tbl.find({"last_updated": {"$exists": True}}).sort("last_updated", pymongo.DESCENDING).limit(4)]
         self.render('templates/index.html', recent=recent, truncate_words=truncate_words, force_mobile = force_mobile(self.request))
 
 def truncate_words(input_string, length, max_chars=None):
@@ -130,12 +130,12 @@ def jsonify(record):
 
 def printqr(img_data):    
     # generate the command to print the file. subprocess takes a list
-    # or arguments, hence the call to split()
+    # of arguments, hence the call to split()
     tmpfile = '/tmp/qrcode.png'
     fp = open(tmpfile, 'w')
     fp.write(img_data)
     fp.close()
-    print_file = 'lp -d SUNLIGHT_LABEL_PRINTER -o media=label '.split() + [tmpfile]
+    print_file = 'lp -d LabelWriter-450-Turbo -o scaling=100 -o position=center'.split() + [tmpfile]
     subprocess.call(print_file)
 
 def force_mobile(request):
@@ -158,9 +158,10 @@ class WebUploadHandler(UploadHandler):
     def post_processing(self, tag_id):
 
         # generate the qr code and send it to printer
-        qr_url = create_qr(tag_uri(tag_id))
+        qr_url = create_qr(tag_uri(tag_id), width=settings['labelx'], height=settings['labely'])
         fp = urllib2.urlopen(qr_url)
         qr_data = fp.read()        
+        printqr(qr_data)
         self.set_secure_cookie("created", "true")
         # show the user their newly created story page
         self.redirect('/tag/%s' % str(tag_id))
@@ -169,9 +170,9 @@ def tag_uri(tag_id):
     uri = settings['root_url'].strip('/') + '/tag/' + str(tag_id)
     return uri
 
-def create_qr(uri):        
+def create_qr(uri, width=100, height=100):        
     args = {
-        'chs' : '%dx%d' % (settings['qrx'], settings['qry']),
+        'chs' : '%dx%d' % (width, height),
         'chl' : uri,            
         }
     params = urllib.urlencode(args)
@@ -213,7 +214,7 @@ class ViewHandler(tornado.web.RequestHandler):
 class WebViewHandler(ViewHandler):
     def post_processing(self, record):
         tag_id = str(record['_id'])
-        context = { 'qr_url' : create_qr(tag_uri(tag_id)) }
+        context = { 'qr_url' : create_qr(tag_uri(tag_id), width=settings['qrx'], height=settings['qry']) }
         context['tag_items'] = record['contents']                
         if self.get_secure_cookie("created") == "true":
             context['message'] = "Your QR code has been sent to the printer!"
@@ -230,11 +231,10 @@ class APIViewHandler(ViewHandler):
 # application settings here; private or local settings in
 # local_settings.py
 settings = {
-    'qrx' : 100, #pixels
-    'qry' : 100, #pixels,
-    'labelx': 0, 
-    'labely': 0,
-    
+    'qrx' : 150, #pixels
+    'qry' : 150, #pixels,
+    'labelx': 200, 
+    'labely': 200,    
 }    
 settings.update(local_settings)
 

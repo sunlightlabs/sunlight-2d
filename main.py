@@ -5,11 +5,9 @@
 # and visit localhost:8888
 
 # todo
-# s3 files
-# should check to make sure a file with that name does not already
-# exist, or change filename to ensure uniqueness
-# printing!
+# recent stories
 # add support for appending to existing tag/story
+# printing!
 # add timezone to datetime in response
 
 import tornado.httpserver
@@ -28,9 +26,24 @@ import pymongo
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        context = {}
-        context['force_mobile'] = force_mobile(self.request)
-        self.render('templates/index.html', context=context)
+        # get most recent stories
+        tbl = pymongo.Connection()[settings['database']][settings['table']]
+        recent = [record for record in tbl.find({"last_updated": {"$exists": True}}).sort("last_updated", pymongo.DESCENDING).limit(10)]
+        self.render('templates/index.html', recent=recent, truncate_words=truncate_words, force_mobile = force_mobile(self.request))
+
+def truncate_words(input_string, length, max_chars=None):
+    ''' truncate the input string to the 'length' number of words. If
+    max_chars is provided, additionally ensure that the truncated
+    string is not longer than max_chars.'''
+    words = input_string.split()
+    if len(words) > length:
+        shortened = ' '.join(words[:length])+'...'
+    else: 
+        shortened = input_string
+    if max_chars and len(shortened) > max_chars:
+            return truncate_words(shortened, length-1, max_chars)
+    return shortened
+
 
 class UploadHandler(tornado.web.RequestHandler):
     ''' base class for the web and api handlers. subclasses need to
@@ -53,11 +66,14 @@ class UploadHandler(tornado.web.RequestHandler):
             f.close()
             thistag['file'] = file_url
 
-        # create 'body' as a list; there might be more body
-        # elements added if multiple people edit the same tag
+        # create 'contents' as a list of items; people may append
+        # content to existing tags
         thistag['created'] = datetime.datetime.now()
         tag = {'contents': [thistag,],
-               'last_updated' : thistag['created']
+               # last_updated will be updated each time a new item is
+               # added to this story
+               'last_updated' : thistag['created'], 
+               'created' : thistag['created'],
                }        
         table = db[settings['table']]
         _id = table.insert(tag, safe=True)

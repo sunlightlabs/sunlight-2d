@@ -8,7 +8,7 @@
         
         <title>Sunlight 2D</title>
         
-        {% if context['force_mobile'] %}
+        {% if force_mobile %}
           <link rel="stylesheet" href="{{ static_url("stylesheets/mobile.css") }}" type="text/css" media="screen, projection" />
         {% else %}
           <link rel="stylesheet" href="{{ static_url("stylesheets/main.css") }}" type="text/css" media="screen, projection" />
@@ -64,28 +64,34 @@
                 </form>
             </div>  
             
-            <!--
+
             <div id="rtColumn">
                 <h2>Recent Uploads</h2>
                 <ul id="recentList">
+		    {% for record in recent %}
                     <li>
-                        <img src="/static/images/test.jpg"/>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque volutpat lacinia odio, ullamcorper facilisis leo suscipit vel. Nulla vel porttitor turpis. Fusce ut libero id neque hendrerit bibendum.</p>
+		        {% if record['contents'][-1].get('file', None) %}
+                        <img src="{{ record['contents'][-1]['file'] }}"/>
+			{% end %}
+
+			{% if record['contents'][-1].get('body', None) %}
+                        <p>{{ truncate_words(record['contents'][-1]['body'], 50, 200) }}</p>
+			{% end %}
+			<span class="timestamp">
+			  <a href="/tag/{{ str(record['_id']) }}">
+			  Created 
+			  {{ record['contents'][-1]['created'].strftime("%b %d %Y") }}
+			  at 
+			  {{ record['contents'][-1]['created'].strftime("%I:%M%p") }}
+			  </a>
+			</span>
                         <div class="clear"></div>
                     </li>
-                    <li>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque volutpat lacinia odio, ullamcorper facilisis leo suscipit vel.</p>
-                        <div class="clear"></div>
-                    </li>
-                    <li>
-                        <img src="/static/images/test.jpg"/>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque volutpat lacinia odio, ullamcorper facilisis leo suscipit vel.</p>
-                        <div class="clear"></div>
-                    </li>    
+		    {% end %}
                 </ul>
-                <!-- <a class="moreLink" href="/tags">View All</a>
+                <!-- <a class="moreLink" href="/tags">View All</a> -->
             </div>
-            -->
+
             
             <div class="clear"></div> 
         </div>       

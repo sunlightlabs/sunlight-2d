@@ -1,4 +1,10 @@
-tornado
-mongodb
+# latest stable
+-f http://www.tornadoweb.org/static/tornado-0.2.tar.gz
+
+# linux 64-bit mongodb, might be different for other systems. 
+-f http://downloads.mongodb.org/linux/mongodb-linux-x86_64-1.4.3.tgz
+
 pymongo
-json or simplejson
+boto
+-e git+http://github.com/jcarbaugh/python-s3file.git#egg=s3file
+

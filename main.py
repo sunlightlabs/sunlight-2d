@@ -23,9 +23,7 @@ except:
     import simplejson as json
 import pymongo
 
-# settings
-DATABASE_NAME = 'demo_database'
-TABLE_NAME = 'demo_table'
+
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -217,10 +215,10 @@ class APIViewHandler(ViewHandler):
     
 
 settings = {
-    'qrx' : 100,
-    'qry' : 100,
-    'root_url' : "http://localhost:8888",
-    'database' : 'qrtaggr',
+    'qrx' : 200,
+    'qry' : 200,
+    'root_url' : "http://2d.sunlightlabs.com",
+    'database' : 'sunlight2d',
     'table' : 'tags',
 }
 

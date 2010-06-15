@@ -5,11 +5,9 @@
 # and visit localhost:8888
 
 # todo
-# s3 files
-# should check to make sure a file with that name does not already
-# exist, or change filename to ensure uniqueness
-# printing!
+# recent stories
 # add support for appending to existing tag/story
+# printing!
 # add timezone to datetime in response
 
 import tornado.httpserver
@@ -28,7 +26,25 @@ import pymongo
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render('templates/index.html')
+        # get most recent stories
+        tbl = pymongo.Connection()[settings['database']][settings['table']]
+        recent = [record for record in tbl.find({"last_updated": {"$exists": True}}).sort("last_updated", pymongo.DESCENDING).limit(10)]
+        self.render('templates/index.html', recent=recent, truncate_words=truncate_words)
+
+def truncate_words(input_string, length, max_chars=None):
+    ''' truncate the input string to the 'length' number of words. If
+    max_chars is provided, additionally ensure that the truncated
+    string is not longer than max_chars.'''
+    words = input_string.split()
+    if len(words) > length:
+        shortened = ' '.join(words[:length])+'...'
+    else: 
+        shortened = input_string
+    if max_chars and len(shortened) > max_chars:
+            return truncate_words(shortened, length-1, max_chars)
+    return shortened
+
+
 
 class UploadHandler(tornado.web.RequestHandler):
     ''' base class for the web and api handlers. subclasses need to

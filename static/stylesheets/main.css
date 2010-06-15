@@ -58,4 +58,6 @@ button.printBtn { width: 178px; height: 45px; background: url(/static/images/btn
 
 ul li { margin-bottom: 15px;}
 
+.timestamp {float: right; font-size: 70%; font-style: oblique;}
+
 .clear{ clear: both;}

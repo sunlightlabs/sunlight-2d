@@ -6,6 +6,8 @@
 
 # todo
 # s3 files
+# should check to make sure a file with that name does not already
+# exist, or change filename to ensure uniqueness
 # printing!
 # add support for appending to existing tag/story
 # add timezone to datetime in response
@@ -14,18 +16,15 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import urllib, urllib2
-import os, datetime, subprocess
-from gridfs import GridFS
+import os, datetime, subprocess, uuid
+from s3file import s3open
+from local_settings import local_settings
 
 try:
     import json
 except:
     import simplejson as json
 import pymongo
-
-# settings
-DATABASE_NAME = 'demo_database'
-TABLE_NAME = 'demo_table'
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -42,16 +41,15 @@ class UploadHandler(tornado.web.RequestHandler):
     def save(self, thistag):
         db = pymongo.Connection()[settings['database']]
 
-        # if there's a file, store it using gridFS and replace the
-        # file body in thistag, with reference to the file in
-        # gridFS (the file_id)
-#        if thistag.get('filebody', None):
-#            gfs = GridFS(db)
-#            file_id = gfs.put(thistag['filebody'], thistag['content_type'])
-#            print 'filebody'
-#            print thistag['filebody']
-#            del thistag['filebody']
-#            thistag['file'] = file_id
+        # if there's a file, store it in s3 and replace the file body
+        # with the s3 url
+        if thistag.get('file', None):
+            unique_filename = str(uuid.uuid4())
+            file_url = "http://assets.2d.sunlightlabs.com/%s" % unique_filename
+            f = s3open(file_url, settings['S3_KEY'], settings['S3_SECRET'])
+            f.write(thistag['file'])
+            f.close()
+            thistag['file'] = file_url
 
         # create 'body' as a list; there might be more body
         # elements added if multiple people edit the same tag
@@ -86,7 +84,7 @@ class UploadHandler(tornado.web.RequestHandler):
             newtag['body'] = self.get_argument('body')
 
         if self.request.files.get('file', None):
-            newtag['filebody'] = self.request.files['file'][0]['body']
+            newtag['file'] = self.request.files['file'][0]['body']
             newtag['content_type'] = self.request.files['file'][0]['content_type']
 
         # save it to the db and create a uri for the content
@@ -182,12 +180,6 @@ def get_record(request, tag_id):
         request.write('''No tag by that name. Perhaps you'd like to <a href="/">create a new one</a>?''')
         return None
 
-    for item in record['contents']:
-        if item.get('file', None):
-            gfs = GridFS(db)
-            filebody = gfs.get(record.get('file'))  
-            item['file'] = filebody.read()
-
     return record
 
 class ViewHandler(tornado.web.RequestHandler):
@@ -214,15 +206,14 @@ class APIViewHandler(ViewHandler):
         self.set_header("Content-Type", "application/json")
         self.write(js)
         return
-    
 
+# application settings here; private or local settings in
+# local_settings.py
 settings = {
     'qrx' : 100,
     'qry' : 100,
-    'root_url' : "http://localhost:8888",
-    'database' : 'qrtaggr',
-    'table' : 'tags',
-}
+}    
+settings.update(local_settings)
 
 application = tornado.web.Application([
         (r'/', MainHandler),

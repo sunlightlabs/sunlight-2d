@@ -16,7 +16,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import urllib, urllib2
-import os, datetime, subprocess, uuid
+import os, datetime, subprocess, uuid, re
 from s3file import s3open
 from local_settings import local_settings
 
@@ -28,7 +28,9 @@ import pymongo
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render('templates/index.html')
+        context = {}
+        context['force_mobile'] = force_mobile(self.request)
+        self.render('templates/index.html', context=context)
 
 class UploadHandler(tornado.web.RequestHandler):
     ''' base class for the web and api handlers. subclasses need to
@@ -119,7 +121,14 @@ def printqr(img_data):
     fp.close()
     print_file = 'lp -d SUNLIGHT_LABEL_PRINTER -o media=label '.split() + [tmpfile]
     subprocess.call(print_file)
-    
+
+def force_mobile(request):
+    agent = re.compile("(Android|iPhone)")
+    result = agent.match(request.headers.get('User-Agent', ""))
+    if result:
+      return True
+    else:
+      return False
 
 class APIUploadHandler(UploadHandler):
     def post_processing(self, tag_id):

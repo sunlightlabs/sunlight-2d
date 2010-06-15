@@ -14,7 +14,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import urllib, urllib2
-import os, datetime, subprocess, uuid
+import os, datetime, subprocess, uuid, re
 from s3file import s3open
 from local_settings import local_settings
 
@@ -29,7 +29,7 @@ class MainHandler(tornado.web.RequestHandler):
         # get most recent stories
         tbl = pymongo.Connection()[settings['database']][settings['table']]
         recent = [record for record in tbl.find({"last_updated": {"$exists": True}}).sort("last_updated", pymongo.DESCENDING).limit(10)]
-        self.render('templates/index.html', recent=recent, truncate_words=truncate_words)
+        self.render('templates/index.html', recent=recent, truncate_words=truncate_words, force_mobile = force_mobile(self.request))
 
 def truncate_words(input_string, length, max_chars=None):
     ''' truncate the input string to the 'length' number of words. If
@@ -43,7 +43,6 @@ def truncate_words(input_string, length, max_chars=None):
     if max_chars and len(shortened) > max_chars:
             return truncate_words(shortened, length-1, max_chars)
     return shortened
-
 
 
 class UploadHandler(tornado.web.RequestHandler):
@@ -138,7 +137,14 @@ def printqr(img_data):
     fp.close()
     print_file = 'lp -d SUNLIGHT_LABEL_PRINTER -o media=label '.split() + [tmpfile]
     subprocess.call(print_file)
-    
+
+def force_mobile(request):
+    agent = re.compile("(Android|iPhone)")
+    result = agent.match(request.headers.get('User-Agent', ""))
+    if result:
+      return True
+    else:
+      return False
 
 class APIUploadHandler(UploadHandler):
     def post_processing(self, tag_id):

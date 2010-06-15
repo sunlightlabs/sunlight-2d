@@ -6,8 +6,12 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Sunlight 2D</title>
         
-        <link rel="stylesheet" href="{{ static_url("stylesheets/main.css") }}" type="text/css" media="screen" />
-        <link rel="stylesheet" href="{{ static_url("stylesheets/mobile.css") }}" type="text/css" media="mobile" />
+        {% if force_mobile %}
+          <link rel="stylesheet" href="{{ static_url("stylesheets/mobile.css") }}" type="text/css" media="screen" />
+        {% else %}
+          <link rel="stylesheet" href="{{ static_url("stylesheets/main.css") }}" type="text/css" media="screen" />
+          <link rel="stylesheet" href="{{ static_url("stylesheets/mobile.css") }}" type="text/css" media="mobile" />
+        {% end %}
         
         <script type="text/javascript" src="http://use.typekit.com/rum2sap.js"></script>
         <script type="text/javascript">try{Typekit.load();}catch(e){}</script>

@@ -1,0 +1,46 @@
+API calls
+
+=== create ===
+
+example.com/upload.json
+
+expects a POST request with a 'body' and/or a file upload with the
+file field named 'file'; eg 
+<input type="file" name="file">
+
+example:
+>>> data = urllib.urlencode({'body': "testing api creation"})
+>>> urllib2.urlopen("http://localhost:8888/upload.json", data=data).read()
+
+=== read ===
+
+example.com/tag/[tag_id].json
+eg. http://localhost:8888/tag/4c16e18261b50f14fc000002.json
+
+
+=== return format ===
+
+both create and read calls return a json dict object of the following
+structure, including a list of dictionaries, each with one content
+item for that 'story' (a story may have multiple content items):
+
+{
+ "_id": "4c16af4661b50f14fc000001", 
+ "last_updated": "2010/06/14 18:37:58", 
+ "contents": [
+   {
+    "body": "testing api", 
+    "created": "2010/06/14 18:37:58",
+    "file" : "http://some.s3.url.com"
+   },
+   {
+    "body": "some other content added later", 
+    "created": "2010/06/24 19:10:18",
+    "file" : "http://some.other.s3.url.com"
+   }
+   ...
+ ]
+}
+
+
+

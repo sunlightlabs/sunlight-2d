@@ -15,7 +15,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import urllib, urllib2
-import os, datetime
+import os, datetime, subprocess
 from gridfs import GridFS
 
 try:
@@ -117,6 +117,16 @@ def jsonify(record):
     js = json.dumps(record)
     return js
 
+def print(img_data):    
+    # generate the command to print the file. subprocess takes a list
+    # or arguments, hence the call to split()
+    tmpfile = '/tmp/qrcode.png'
+    fp = open(tmpfile, 'w')
+    fp.write(img_data)
+    fp.close()
+    print_file = 'lp -d SUNLIGHT_LABEL_PRINTER -o someopt -o otheropt '.split() + [tmpfile]
+    subprocess.call(print_file)
+    
 
 class APIUploadHandler(UploadHandler):
     def post_processing(self, tag_id):
@@ -132,9 +142,13 @@ class APIUploadHandler(UploadHandler):
 
 class WebUploadHandler(UploadHandler):
     def post_processing(self, tag_id):
-        # send the qr code to printer
 
-        # show the user their newly created tag
+        # generate the qr code and send it to printer
+        qr_url = create_qr(tag_uri(tag_id))
+        fp = urllib2.urlopen(qr_url)
+        qr_data = fp.read()        
+
+        # show the user their newly created story page
         self.redirect('/tag/%s' % str(tag_id))            
 
 def tag_uri(tag_id):

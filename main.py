@@ -67,10 +67,6 @@ class UploadHandler(tornado.web.RequestHandler):
         # arguments is a dict of key:value pairs where each value is a
         # list (even if there is only one item). 
         form = self.request.arguments
-        print 'Arguments were:'
-        print form
-        print 'files submitted were:'
-        print self.request.files
 
         # make sure the user submitted at least one of the fields:
         if self.get_argument('body', "") == "" and not self.request.files.get('file', None):
@@ -146,7 +142,7 @@ class WebUploadHandler(UploadHandler):
         qr_data = fp.read()        
 
         # show the user their newly created story page
-        self.redirect('/tag/%s' % str(tag_id))            
+        self.redirect('/tag/%s' % str(tag_id))
 
 def tag_uri(tag_id):
     uri = settings['root_url'].strip('/') + '/tag/' + str(tag_id)

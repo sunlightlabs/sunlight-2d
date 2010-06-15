@@ -28,7 +28,7 @@ import pymongo
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render('index.html')
+        self.render('templates/index.html')
 
 class UploadHandler(tornado.web.RequestHandler):
     ''' base class for the web and api handlers. subclasses need to
@@ -67,10 +67,6 @@ class UploadHandler(tornado.web.RequestHandler):
         # arguments is a dict of key:value pairs where each value is a
         # list (even if there is only one item). 
         form = self.request.arguments
-        print 'Arguments were:'
-        print form
-        print 'files submitted were:'
-        print self.request.files
 
         # make sure the user submitted at least one of the fields:
         if self.get_argument('body', "") == "" and not self.request.files.get('file', None):
@@ -96,7 +92,7 @@ class UploadHandler(tornado.web.RequestHandler):
         except BaseException, e:
             print 'there was an error from mongo:'
             print e
-            self.write("There was a problem")
+            self.write("There was a problem: %s" % e)
             return
 
         self.post_processing(tag_id)
@@ -146,7 +142,7 @@ class WebUploadHandler(UploadHandler):
         qr_data = fp.read()        
 
         # show the user their newly created story page
-        self.redirect('/tag/%s' % str(tag_id))            
+        self.redirect('/tag/%s' % str(tag_id))
 
 def tag_uri(tag_id):
     uri = settings['root_url'].strip('/') + '/tag/' + str(tag_id)
@@ -198,7 +194,7 @@ class WebViewHandler(ViewHandler):
         tag_id = str(record['_id'])
         context = { 'qr_url' : create_qr(tag_uri(tag_id)) }
         context['tag_items'] = record['contents']
-        self.render('view.html', context=context)        
+        self.render('templates/view.html', context=context)        
 
 class APIViewHandler(ViewHandler):
     def post_processing(self, record):

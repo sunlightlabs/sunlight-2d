@@ -5,7 +5,7 @@
         <meta name="description" content="" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Sunlight 2D</title>
-        <link rel="stylesheet" href="main.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="{{ static_url("stylesheets/main.css") }}" type="text/css" media="screen" />
         
         <script type="text/javascript" src="http://use.typekit.com/rum2sap.js"></script>
         <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
@@ -16,17 +16,28 @@
     </head>
     <body class="story">
         <div id="header">
-            <h1><a href="#">Sunlight 2D</a></h1>
+            <h1><a href="/">Sunlight 2D</a></h1>
         </div>
         <div id="pageMain">
             <div id="ltColumn">
-                <h2>Entry</h2>
-                <img src="images/test.jpg"/>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque volutpat lacinia odio, ullamcorper facilisis leo suscipit vel. Nulla vel porttitor turpis. Fusce ut libero id neque hendrerit bibendum.</p>
+                
+                {% for item in context['tag_items'] %}
+                
+                  {% if item.get('file', None) %}
+                    <img src="{{ item['file'] }}"</p>
+                  {% end %}
+                  
+                  {% if item.get('body', None) %}
+                    <p>
+                      {{ item['body'] }}
+                    </p>
+                  {% end %}
+                
+                {% end %}
+                
             </div>  
-            <div id="rtColumn">
-            </div>  
-            <div class="clear"></div> 
+            <div id="rtColumn"></div>
+            <div class="clear"></div>
         </div>       
     </body>
 </html>

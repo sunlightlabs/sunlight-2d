@@ -18,9 +18,11 @@ $(function() {
         <div id="pageMain">
             <div id="ltColumn">
 
+	      <div id="spacer">
                 {% if context.get('message', None) %}
 	        <span id="message">{{ context['message'] }}</span>
 		{% end %}
+   	      </div>
 
                 {% for item in context['tag_items'] %}
                 

@@ -1,8 +1,10 @@
 # latest stable
 -f http://www.tornadoweb.org/static/tornado-0.2.tar.gz
 
-# linux 64-bit mongodb, might be different for other systems. 
--f http://downloads.mongodb.org/linux/mongodb-linux-x86_64-1.4.3.tgz
+# mongo is not a python module, but it is a dependency so its here to
+# remind you!
+# link to linux 64-bit mongodb, might be different for other systems: 
+# http://downloads.mongodb.org/linux/mongodb-linux-x86_64-1.4.3.tgz
 
 pymongo
 boto

@@ -27,7 +27,7 @@ import pymongo
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render('index.html')
+        self.render('templates/index.html')
 
 class UploadHandler(tornado.web.RequestHandler):
     ''' base class for the web and api handlers. subclasses need to
@@ -96,7 +96,7 @@ class UploadHandler(tornado.web.RequestHandler):
         except BaseException, e:
             print 'there was an error from mongo:'
             print e
-            self.write("There was a problem")
+            self.write("There was a problem: %s" % e)
             return
 
         self.post_processing(tag_id)
@@ -220,6 +220,7 @@ settings = {
     'root_url' : "http://2d.sunlightlabs.com",
     'database' : 'sunlight2d',
     'table' : 'tags',
+    'static_path': os.path.join(os.path.dirname(__file__), "static"),
 }
 
 application = tornado.web.Application([

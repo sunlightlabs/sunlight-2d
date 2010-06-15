@@ -5,7 +5,7 @@
         <meta name="description" content="" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Sunlight 2D</title>
-        <link rel="stylesheet" href="main.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="{{ static_url("stylesheets/main.css") }}" type="text/css" media="screen" />
         
         <script type="text/javascript" src="http://use.typekit.com/rum2sap.js"></script>
         <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
@@ -16,7 +16,7 @@
     </head>
     <body class="home">
         <div id="header">
-            <h1><a href="#">Sunlight 2D</a></h1>
+            <h1><a href="/">Sunlight 2D</a></h1>
         </div>
         <div id="featureBoxWrapper">
             <div id="featureBox">
@@ -32,16 +32,16 @@
         <div id="pageMain">
             <div id="ltColumn">
                 <h2>Make One</h2>
-                <form action="#">
+                <form action="/upload" method="post" enctype="multipart/form-data">
                     <ul>
                         <li>
                             <label>Attach Text</label>
-                            <textarea rows="5" cols="32" name="description"></textarea>
+                            <textarea rows="5" cols="32" name="body"></textarea>
                         </li>
                         <li>
                             <span class="helperText">and/or</span>
                             <label>Upload an Image</label>
-                            <input type="file"/>
+                            <input type="file" name="file" />
                         </li>
                         <li>
                             <button class="printBtn" type="submit">
@@ -51,11 +51,12 @@
                     </ul>
                 </form>
             </div>  
+            <!--
             <div id="rtColumn">
                 <h2>Recent Uploads</h2>
                 <ul id="recentList">
                     <li>
-                        <img src="images/test.jpg"/>
+                        <img src="/static/images/test.jpg"/>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque volutpat lacinia odio, ullamcorper facilisis leo suscipit vel. Nulla vel porttitor turpis. Fusce ut libero id neque hendrerit bibendum.</p>
                         <div class="clear"></div>
                     </li>
@@ -64,13 +65,14 @@
                         <div class="clear"></div>
                     </li>
                     <li>
-                        <img src="images/test.jpg"/>
+                        <img src="/static/images/test.jpg"/>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque volutpat lacinia odio, ullamcorper facilisis leo suscipit vel.</p>
                         <div class="clear"></div>
                     </li>    
                 </ul>
                 <a class="moreLink" href="#">View All</a>
             </div>  
+            -->
             <div class="clear"></div> 
         </div>       
     </body>

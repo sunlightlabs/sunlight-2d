@@ -5,8 +5,7 @@
 # and visit localhost:8888
 
 # todo
-# add api support for retrieving a record with the tagid
-# fix files
+# s3 files
 # printing!
 # add support for appending to existing tag/story
 # add timezone to datetime in response
@@ -40,7 +39,7 @@ class UploadHandler(tornado.web.RequestHandler):
         ''' implemented by sub class'''
         pass
 
-    def db_save(self, thistag):
+    def save(self, thistag):
         db = pymongo.Connection()[settings['database']]
 
         # if there's a file, store it using gridFS and replace the
@@ -94,7 +93,7 @@ class UploadHandler(tornado.web.RequestHandler):
         try:
             print 'newtag will be created with the following information'
             print newtag
-            tag_id = self.db_save(newtag)
+            tag_id = self.save(newtag)
             context['tag_id'] = tag_id
         except BaseException, e:
             print 'there was an error from mongo:'
@@ -117,7 +116,7 @@ def jsonify(record):
     js = json.dumps(record)
     return js
 
-def print(img_data):    
+def printqr(img_data):    
     # generate the command to print the file. subprocess takes a list
     # or arguments, hence the call to split()
     tmpfile = '/tmp/qrcode.png'

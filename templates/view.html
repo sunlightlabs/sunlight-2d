@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
 {% block extrajs %}
+
 $(function() {
   setTimeout(function() {
     $('#message').fadeOut("slow");
   }, 1000);
 });
+
 {% end %}
 
 {% block body %}

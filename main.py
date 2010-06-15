@@ -14,7 +14,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import urllib, urllib2
-import os, datetime, subprocess, uuid, re
+import os, datetime, subprocess, uuid
 from s3file import s3open
 from local_settings import local_settings
 
@@ -139,12 +139,8 @@ def printqr(img_data):
     subprocess.call(print_file)
 
 def force_mobile(request):
-    agent = re.compile("(Android|iPhone)")
-    result = agent.match(request.headers.get('User-Agent', ""))
-    if result:
-      return True
-    else:
-      return False
+    agent = request.headers.get('User-Agent', "")
+    return agent.find("iPhone") >= 0 or agent.find("Android") >= 0
 
 class APIUploadHandler(UploadHandler):
     def post_processing(self, tag_id):
@@ -222,7 +218,6 @@ class WebViewHandler(ViewHandler):
         if self.get_secure_cookie("created") == "true":
             context['message'] = "Your QR code has been sent to the printer!"
             self.set_secure_cookie("created", "false")
-
         self.render('templates/view.html', context=context, force_mobile = force_mobile(self.request))        
 
 class APIViewHandler(ViewHandler):

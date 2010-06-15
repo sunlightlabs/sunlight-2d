@@ -214,11 +214,17 @@ class ViewHandler(tornado.web.RequestHandler):
 class WebViewHandler(ViewHandler):
     def post_processing(self, record):
         tag_id = str(record['_id'])
+<<<<<<< HEAD:main.py
         context = { 'qr_url' : create_qr(tag_uri(tag_id), width=settings['qrx'], height=settings['qry']) }
+=======
+        context = { 'qr_url' : create_qr(tag_uri(tag_id), settings['webqrx'], settings['webqry']) }
+>>>>>>> 07d90b0dd9a20ec413f1b66139e8c129efe97714:main.py
         context['tag_items'] = record['contents']                
+        
         if self.get_secure_cookie("created") == "true":
             context['message'] = "Your QR code has been sent to the printer!"
             self.set_secure_cookie("created", "false")
+            
         self.render('templates/view.html', context=context, force_mobile = force_mobile(self.request))        
 
 class APIViewHandler(ViewHandler):
@@ -231,10 +237,20 @@ class APIViewHandler(ViewHandler):
 # application settings here; private or local settings in
 # local_settings.py
 settings = {
+<<<<<<< HEAD:main.py
     'qrx' : 150, #pixels
     'qry' : 150, #pixels,
     'labelx': 200, 
     'labely': 200,    
+=======
+    'qrx' : 100, #pixels
+    'qry' : 100, #pixels,
+    'labelx': 0, 
+    'labely': 0,
+    'webqrx': 200,
+    'webqry': 200
+    
+>>>>>>> 07d90b0dd9a20ec413f1b66139e8c129efe97714:main.py
 }    
 settings.update(local_settings)
 

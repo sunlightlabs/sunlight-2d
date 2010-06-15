@@ -58,8 +58,8 @@ button.printBtn { width: 178px; height: 45px; background: url(/static/images/btn
 
 ul li { margin-bottom: 15px;}
 
-#message {color: red; padding-bottom: 20px; font-size: 120%;}
-#spacer {height: 30px;}
+#message {color: red; padding-bottom: 20px; font-size: 120%; padding: 10px 15px; background-color: #F2E7CC; border: dashed 1px #E4B123; -moz-border-radius: 3px; -webkit-border-radius: 3px; width: 560px; display: block;}
+#spacer {height: 30px; margin-bottom: 20px;}
 .timestamp { font-size: 80%; font-style: oblique; margin-top: 15px; text-decoration: none; display: block;}
 
 

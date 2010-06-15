@@ -16,7 +16,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import urllib, urllib2
-import os, datetime, subprocess, uuid, re
+import os, datetime, subprocess, uuid
 from s3file import s3open
 from local_settings import local_settings
 
@@ -123,12 +123,8 @@ def printqr(img_data):
     subprocess.call(print_file)
 
 def force_mobile(request):
-    agent = re.compile("(Android|iPhone)")
-    result = agent.match(request.headers.get('User-Agent', ""))
-    if result:
-      return True
-    else:
-      return False
+    agent = request.headers.get('User-Agent', "")
+    return agent.find("iPhone") >= 0 or agent.find("Android") >= 0
 
 class APIUploadHandler(UploadHandler):
     def post_processing(self, tag_id):
@@ -203,6 +199,7 @@ class WebViewHandler(ViewHandler):
         tag_id = str(record['_id'])
         context = { 'qr_url' : create_qr(tag_uri(tag_id)) }
         context['tag_items'] = record['contents']
+        context['force_mobile'] = force_mobile(self.request)
         self.render('templates/view.html', context=context)        
 
 class APIViewHandler(ViewHandler):

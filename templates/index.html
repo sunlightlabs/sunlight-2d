@@ -1,15 +1,17 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
     <head>
         <meta name="keywords" content="" />
         <meta name="description" content="" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        
         <title>Sunlight 2D</title>
         
         {% if context['force_mobile'] %}
-          <link rel="stylesheet" href="{{ static_url("stylesheets/mobile.css") }}" type="text/css" media="screen" />
+          <link rel="stylesheet" href="{{ static_url("stylesheets/mobile.css") }}" type="text/css" media="screen, projection" />
         {% else %}
-          <link rel="stylesheet" href="{{ static_url("stylesheets/main.css") }}" type="text/css" media="screen" />
+          <link rel="stylesheet" href="{{ static_url("stylesheets/main.css") }}" type="text/css" media="screen, projection" />
           <link rel="stylesheet" href="{{ static_url("stylesheets/mobile.css") }}" type="text/css" media="mobile" />
         {% end %}
         
@@ -18,6 +20,11 @@
 
         <!--[if IE 6]><link rel="stylesheet" href="buggy.css" type="text/css" media="screen" /><![endif]-->
         <!--[if IE 7]><link rel="stylesheet" href="buggy7.css" type="text/css" media="screen" /><![endif]-->
+        
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta name="apple-touch-fullscreen" content="yes" />
+        <link rel="apple-touch-icon" href="{{ static_url("images/touch-icon.png") }}" />
 
     </head>
     <body class="home">

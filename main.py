@@ -158,7 +158,7 @@ class WebUploadHandler(UploadHandler):
     def post_processing(self, tag_id):
 
         # generate the qr code and send it to printer
-        qr_url = create_qr(tag_uri(tag_id))
+        qr_url = create_qr(tag_uri(tag_id), settings['qrx'], settings['qry'])
         fp = urllib2.urlopen(qr_url)
         qr_data = fp.read()        
         self.set_secure_cookie("created", "true")
@@ -169,10 +169,10 @@ def tag_uri(tag_id):
     uri = settings['root_url'].strip('/') + '/tag/' + str(tag_id)
     return uri
 
-def create_qr(uri):        
+def create_qr(uri, width, height):
     args = {
-        'chs' : '%dx%d' % (settings['qrx'], settings['qry']),
-        'chl' : uri,            
+        'chs' : '%dx%d' % (width, height),
+        'chl' : uri,
         }
     params = urllib.urlencode(args)
     url = "http://chart.apis.google.com/chart?cht=qr&"+params
@@ -213,11 +213,13 @@ class ViewHandler(tornado.web.RequestHandler):
 class WebViewHandler(ViewHandler):
     def post_processing(self, record):
         tag_id = str(record['_id'])
-        context = { 'qr_url' : create_qr(tag_uri(tag_id)) }
+        context = { 'qr_url' : create_qr(tag_uri(tag_id), settings['webqrx'], settings['webqry']) }
         context['tag_items'] = record['contents']                
+        
         if self.get_secure_cookie("created") == "true":
             context['message'] = "Your QR code has been sent to the printer!"
             self.set_secure_cookie("created", "false")
+            
         self.render('templates/view.html', context=context, force_mobile = force_mobile(self.request))        
 
 class APIViewHandler(ViewHandler):
@@ -234,6 +236,8 @@ settings = {
     'qry' : 100, #pixels,
     'labelx': 0, 
     'labely': 0,
+    'webqrx': 200,
+    'webqry': 200
     
 }    
 settings.update(local_settings)

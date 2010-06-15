@@ -165,7 +165,7 @@ class WebUploadHandler(UploadHandler):
         qr_url = create_qr(tag_uri(tag_id))
         fp = urllib2.urlopen(qr_url)
         qr_data = fp.read()        
-
+        self.set_secure_cookie("created", "true")
         # show the user their newly created story page
         self.redirect('/tag/%s' % str(tag_id))
 
@@ -218,8 +218,12 @@ class WebViewHandler(ViewHandler):
     def post_processing(self, record):
         tag_id = str(record['_id'])
         context = { 'qr_url' : create_qr(tag_uri(tag_id)) }
-        context['tag_items'] = record['contents']
-        self.render('templates/view.html', context=context)        
+        context['tag_items'] = record['contents']                
+        if self.get_secure_cookie("created") == "true":
+            context['message'] = "Your QR code has been sent to the printer!"
+            self.set_secure_cookie("created", "false")
+
+        self.render('templates/view.html', context=context, force_mobile = force_mobile(self.request))        
 
 class APIViewHandler(ViewHandler):
     def post_processing(self, record):

@@ -1,25 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" >
-    <head>
-        <meta name="keywords" content="" />
-        <meta name="description" content="" />
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Sunlight 2D</title>
-        
-        {% if force_mobile %}
-          <link rel="stylesheet" href="{{ static_url("stylesheets/mobile.css") }}" type="text/css" media="screen" />
-        {% else %}
-          <link rel="stylesheet" href="{{ static_url("stylesheets/main.css") }}" type="text/css" media="screen" />
-          <link rel="stylesheet" href="{{ static_url("stylesheets/mobile.css") }}" type="text/css" media="mobile" />
-        {% end %}
-        
-        <script type="text/javascript" src="http://use.typekit.com/rum2sap.js"></script>
-        <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+{% extends "base.html" %}
 
-        <!--[if IE 6]><link rel="stylesheet" href="buggy.css" type="text/css" media="screen" /><![endif]-->
-        <!--[if IE 7]><link rel="stylesheet" href="buggy7.css" type="text/css" media="screen" /><![endif]-->
-
-    </head>
+{% block body %}
     <body class="home">
         <div id="header">
             <h1><a href="/">Sunlight 2D</a></h1>
@@ -89,4 +70,5 @@
             <div class="clear"></div> 
         </div>       
     </body>
-</html>
+
+{% end %}

@@ -1,26 +1,25 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" >
-    <head>
-        <meta name="keywords" content="" />
-        <meta name="description" content="" />
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Sunlight 2D</title>
-        <link rel="stylesheet" href="{{ static_url("stylesheets/main.css") }}" type="text/css" media="screen" />
-        
-        <script type="text/javascript" src="http://use.typekit.com/rum2sap.js"></script>
-        <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+{% extends "base.html" %}
 
-        <!--[if IE 6]><link rel="stylesheet" href="buggy.css" type="text/css" media="screen" /><![endif]-->
-        <!--[if IE 7]><link rel="stylesheet" href="buggy7.css" type="text/css" media="screen" /><![endif]-->
+{% block extrajs %}
+$(function() {
+  setTimeout(function() {
+    $('#message').fadeOut("slow");
+  }, 1000);
+});
+{% end %}
 
-    </head>
+{% block body %}
     <body class="story">
         <div id="header">
             <h1><a href="/">Sunlight 2D</a></h1>
         </div>
         <div id="pageMain">
             <div id="ltColumn">
-                
+
+                {% if context.get('message', None) %}
+	        <span id="message">{{ context['message'] }}</span>
+		{% end %}
+
                 {% for item in context['tag_items'] %}
                 
                   {% if item.get('file', None) %}
@@ -37,7 +36,9 @@
                 
             </div>  
             <div id="rtColumn"></div>
+	    <img src="{{ context['qr_url'] }}" />
             <div class="clear"></div>
         </div>       
     </body>
-</html>
+
+{% end %}

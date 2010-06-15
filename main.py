@@ -5,11 +5,11 @@
 # and visit localhost:8888
 
 # todo
-# fix files
 # add api support for retrieving a record with the tagid
-# add timezone to datetime in response
+# fix files
+# printing!
 # add support for appending to existing tag/story
-
+# add timezone to datetime in response
 
 import tornado.httpserver
 import tornado.ioloop
@@ -36,7 +36,7 @@ class UploadHandler(tornado.web.RequestHandler):
     ''' base class for the web and api handlers. subclasses need to
     implement the self.post_processing() method for any additional
     processing. '''
-    def post_processing(self):
+    def post_processing(self, tag_id):
         ''' implemented by sub class'''
         pass
 
@@ -104,25 +104,30 @@ class UploadHandler(tornado.web.RequestHandler):
 
         self.post_processing(tag_id)
 
+def jsonify(record):
+    ''' takes a record an converts the datetime objects and object ID
+    to string, and returns it as a json-encoded string'''
+    record['_id'] = str(record['_id'])
+    record['last_updated'] = record['last_updated'].strftime("%Y/%m/%d %H:%M:%S")
+    items = []
+    for item in record['contents']:
+        item['created'] = item['created'].strftime("%Y/%m/%d %H:%M:%S")
+        items.append(item)
+    record['contents'] = items
+    js = json.dumps(record)
+    return js
+
 
 class APIUploadHandler(UploadHandler):
     def post_processing(self, tag_id):
         ''' returns a json object with the tag/story contents'''
 
         record = get_record(self, tag_id)        
-
-        # make the record json-able
-        record['_id'] = str(record['_id'])
-        record['last_updated'] = record['last_updated'].strftime("%Y/%m/%d %H:%M:%S")
-        items = []
-        for item in record['contents']:
-            item['created'] = item['created'].strftime("%Y/%m/%d %H:%M:%S")
-            items.append(item)
-        record['contents'] = items
+        js = jsonify(record)
         print 'will send response:'
-        print record
+        print js
         self.set_header("Content-Type", "application/json")
-        self.write(json.dumps(record))
+        self.write(js)
         return
 
 class WebUploadHandler(UploadHandler):
@@ -175,13 +180,28 @@ def get_record(request, tag_id):
 class ViewHandler(tornado.web.RequestHandler):
     def get(self, tag_id):        
         print 'retrieving view info for tag_id %s' % tag_id        
-        context = { 'qr_url' : create_qr(tag_uri(tag_id)) }
         record = get_record(self, tag_id)
         if not record:
             return
+        self.post_processing(record)
 
+    def post_processing(self, record):
+        pass
+
+class WebViewHandler(ViewHandler):
+    def post_processing(self, record):
+        tag_id = str(record['_id'])
+        context = { 'qr_url' : create_qr(tag_uri(tag_id)) }
         context['tag_items'] = record['contents']
         self.render('view.html', context=context)        
+
+class APIViewHandler(ViewHandler):
+    def post_processing(self, record):
+        js = jsonify(record)
+        self.set_header("Content-Type", "application/json")
+        self.write(js)
+        return
+    
 
 settings = {
     'qrx' : 100,
@@ -194,8 +214,9 @@ settings = {
 application = tornado.web.Application([
         (r'/', MainHandler),
         (r'/upload', WebUploadHandler),
-        (r'/upload.json', APIUploadHandler),
-        (r'/tag/([\w]+)', ViewHandler),
+        (r'/upload.json', APIUploadHandler),        
+        (r'/tag/([\w]+)', WebViewHandler),
+        (r'/tag/([\w]+)\.json', APIViewHandler),
         ], cookie_secret="pYqy/FIEQKiXs/2XOlFMQ+GojmHkkUtnvxMxmifRxYA=", **settings)
 
 if __name__ == '__main__':

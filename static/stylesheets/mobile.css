@@ -28,7 +28,7 @@ p { margin-bottom: 1em;}
 a.button { -moz-border-radius: 3px; -webkit-border-radius: 3px; background-color: #E03D05; padding: 10px 10px 8px; text-decoration: none; display: block; color: #fff; text-transform: uppercase; text-align: center; width: 140px; border:1px dashed #FCFAFA; font-weight: bold; margin-top: 25px;}
 textarea { padding: 5px; width: 97%; font-size: 16px;}
 
-div#story { background-color: #F2E7CC; border: dashed 1px #E4B123; padding: 10px; -moz-border-radius: 3px; -webkit-border-radius: 3px; margin-bottom: 25px;}
+div#wrapper { background-color: #F2E7CC; border: dashed 1px #E4B123; padding: 10px; -moz-border-radius: 3px; -webkit-border-radius: 3px; margin-bottom: 25px;}
 ol { list-style-type: decimal; color: #E4B123; font-weight: bold; padding-left: 20px; font-size: 16px;}
 ol span { font-weight: normal; color: #938A8A; font-size: 14px;}
 
@@ -37,9 +37,7 @@ form li { margin-bottom: 8px;}
 label { display: block; margin-bottom: 5px; line-height: 18px;}
 input {color: #A7A9AC;}
 textarea { border: solid 1px #A7A9AC; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
-span.formHelper { display: block; color: #A7A9AC; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; margin-right: 5px; float: left;}
-
-span.tip { color: #E03D05; font-weight: bold; text-transform: uppercase;}
+span.helperText { display: block; color: #A7A9AC; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; margin-right: 5px; float: left;}
 
 img { max-width: 300px;}
 

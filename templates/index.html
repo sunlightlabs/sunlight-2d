@@ -5,7 +5,9 @@
         <meta name="description" content="" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Sunlight 2D</title>
+        
         <link rel="stylesheet" href="{{ static_url("stylesheets/main.css") }}" type="text/css" media="screen" />
+        <link rel="stylesheet" href="{{ static_url("stylesheets/mobile.css") }}" type="text/css" media="mobile" />
         
         <script type="text/javascript" src="http://use.typekit.com/rum2sap.js"></script>
         <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
@@ -21,11 +23,11 @@
         <div id="featureBoxWrapper">
             <div id="featureBox">
                 <div id="wrapper">
-                <ol>
-                    <li>Upload Your Story</li>
-                    <li>Print a QR Code</li>
-                    <li>Share With the Office</li>
-                </ol> 
+                  <ol>
+                      <li><span>Upload Your Story</span></li>
+                      <li><span>Print a QR Code</span></li>
+                      <li><span>Share With the Office</span></li>
+                  </ol> 
                 </div>   
             </div>
         </div>
@@ -50,6 +52,7 @@
                     </ul>
                 </form>
             </div>  
+            
             <!--
             <div id="rtColumn">
                 <h2>Recent Uploads</h2>
@@ -69,9 +72,10 @@
                         <div class="clear"></div>
                     </li>    
                 </ul>
-                <a class="moreLink" href="#">View All</a>
-            </div>  
+                <!-- <a class="moreLink" href="/tags">View All</a>
+            </div>
             -->
+            
             <div class="clear"></div> 
         </div>       
     </body>

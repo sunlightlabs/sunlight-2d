@@ -8,7 +8,6 @@
 # create tmp dir and cron job to clean tmp dir periodically
 # ability to disable printing
 # feedback button
-# append button shouldnt say print, and shouldnt print
 # reprint button
 # footer telling people where to go to create their own qr code
 # "see all" view (all qr codes)
@@ -269,10 +268,10 @@ class WebViewHandler(ViewHandler):
         print self.get_secure_cookie("updated")
 
         marker = "[%s]" % tag_id
-        if self.get_secure_cookie("created").find(marker) >= 0:
+        if self.get_secure_cookie("created") and self.get_secure_cookie("created").find(marker) >= 0:
             context['message'] = "Your QR code has been sent to the printer!"
             self.set_secure_cookie("created", self.get_secure_cookie("created").replace(marker,""))
-        elif self.get_secure_cookie("updated").find(marker) >= 0:
+        elif self.get_secure_cookie("updated") and self.get_secure_cookie("updated").find(marker) >= 0:
             context['message'] = "This story has been updated"
             self.set_secure_cookie("updated", self.get_secure_cookie("updated").replace(marker,"")) 
 

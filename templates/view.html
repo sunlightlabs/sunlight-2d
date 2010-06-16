@@ -22,7 +22,7 @@ $(function() {
                     <span id="message">{{ context['message'] }}</span>
                     {% end %}
                 </div>
-                <ul class="tagitem">
+                <ul id="tagitem">
                     {% for item in context['record']['contents'] %}
                     <li>
                         {% if item.get('file', None) %}

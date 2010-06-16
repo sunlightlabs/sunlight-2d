@@ -40,7 +40,7 @@ body.story div#ltColumn { width: 600px;}
 body.story div#rtColumn { width: 280px;}
 
 #recentList img{ max-width: 100px; border: 1px solid #b7b0aa; padding: 5px; margin-right: 20px; float: left;}
-#recentList li { padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px dashed #d1cbc6;}
+#recentList li, #tagitem li { padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px dashed #d1cbc6;}
 
 body.story img { border: 1px solid #b7b0aa; padding: 5px; margin-bottom: 20px; max-width: 500px;}
 

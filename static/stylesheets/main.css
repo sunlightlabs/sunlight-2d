@@ -55,6 +55,7 @@ input, textarea { border: 1px dashed #d1cbc6; -moz-border-radius: 3px; -webkit-b
 
 button { margin-left: 145px; margin-top: 30px; text-indent: -9999em; display: block; border: none; cursor: pointer;}
 button.printBtn { width: 178px; height: 45px; background: url(/static/images/btn_print.png) top left no-repeat; }
+button.appendBtn { width: 178px; height: 45px; background: url(/static/images/btn_append.png) top left no-repeat; }
 
 .helperText { display: block; margin-bottom: 15px; font-size: 120%; font-family: Georgia, Times New Roman, Times, serif; font-style: oblique; color: #99938c;}
 

@@ -65,5 +65,7 @@ ul li { margin-bottom: 15px;}
 #spacer {height: 30px; margin-bottom: 20px;}
 .timestamp { font-size: 80%; font-style: oblique; margin-top: 15px; text-decoration: none; display: block;}
 #append {padding-top:30px; margin-top: 10px;}
+#reprint {align: center;}
+#reprint_btn {width: 100px;}
 
 .clear{ clear: both;}

@@ -165,12 +165,16 @@ def jsonify(record):
     js = json.dumps(record)
     return js
 
-def printqr(img_data, tag_id):    
+def printqr(tag_id):    
     # generate the command to print the file. subprocess takes a list
     # of arguments, hence the call to split()    
+    qr_url = create_qr(tag_uri(tag_id), width=settings['labelx'], height=settings['labely'])
+    fp = urllib2.urlopen(qr_url)
+    qr_data = fp.read()        
+    
     tmpfile = '/tmp/%s.png' % tag_id
     fp = open(tmpfile, 'w')
-    fp.write(img_data)
+    fp.write(qr_data)
     fp.close()
     if settings['printing'] == 'enabled':
         print 'printing qr code...'
@@ -201,11 +205,8 @@ class WebUploadHandler(UploadHandler):
         # if this is a new tag, generate the qr code and send it
         # to printer
         if not self.get_argument('id', None):
-            qr_url = create_qr(tag_uri(tag_id), width=settings['labelx'], height=settings['labely'])
-            fp = urllib2.urlopen(qr_url)
-            qr_data = fp.read()        
             print 'calling printqr...'
-            printqr(qr_data, tag_id)
+            printqr(tag_id)
         # redirect to the story page
         self.redirect('/tag/%s' % tag_id)
 
@@ -289,6 +290,13 @@ class APIViewHandler(ViewHandler):
         self.write(js)
         return
 
+class ReprintHandler(tornado.web.RequestHandler):
+    def get(self):
+        if self.get_argument('id', None):
+            tag_id = self.get_argument('id')
+            printqr(tag_id)
+        self.redirect('/tag/%s' % tag_id)
+
 # application settings here; private or local settings in
 # local_settings.py
 settings = {
@@ -305,6 +313,7 @@ application = tornado.web.Application([
         (r'/upload.json', APIUploadHandler),        
         (r'/tag/([\w]+)', WebViewHandler),
         (r'/tag/([\w]+)\.json', APIViewHandler),
+        (r'/reprint', ReprintHandler),
         ], cookie_secret="pYqy/FIEQKiXs/2XOlFMQ+GojmHkkUtnvxMxmifRxYA=", **settings)
 
 if __name__ == '__main__':

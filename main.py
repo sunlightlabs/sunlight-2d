@@ -5,10 +5,18 @@
 # and visit localhost:8888
 
 # todo
+# create tmp dir and cron job to clean tmp dir periodically
+# ability to disable printing
+# feedback button
+# append button shouldnt say print, and shouldnt print
+# reprint button
+# footer telling people where to go to create their own qr code
 # "see all" view (all qr codes)
 # display error message on index page if it exists
-# add support for appending to existing tag/story
+# delineate each section of the story more clearly
 # add timezone to datetime in response
+# rss feed
+
 
 import tornado.httpserver
 import tornado.ioloop
@@ -73,7 +81,7 @@ class UploadHandler(tornado.web.RequestHandler):
             thistag['file'] = file_url    
         thistag['created'] = datetime.datetime.now()
 
-        if not thistag.get('id', None):
+        if not thistag.get('id', None):            
             # create 'contents' as a list of items; people may append
             # content to existing tags
             tag = {'contents': [thistag,],
@@ -83,6 +91,12 @@ class UploadHandler(tornado.web.RequestHandler):
                    'created' : thistag['created'],
                    }        
             _id = table.insert(tag, safe=True)
+            
+            if self.get_secure_cookie("created"):                
+                newvalue = self.get_secure_cookie("created") + "["+str(_id)+"]"
+                self.set_secure_cookie("created", newvalue)
+            else:
+                self.set_secure_cookie("created", "[%s]" % str(_id))
 
         else:
             _id = pymongo.objectid.ObjectId(thistag.get('id'))
@@ -92,7 +106,13 @@ class UploadHandler(tornado.web.RequestHandler):
             del thistag['id']
             record['contents'].append(thistag)
             record['last_updated'] = thistag['created']
-            table.save(record)
+            table.save(record)            
+            if self.get_secure_cookie("updated"):                
+                newvalue = self.get_secure_cookie("updated") + "["+str(_id)+"]"
+                self.set_secure_cookie("updated", newvalue)
+            else:
+                self.set_secure_cookie("updated", "[%s]" % str(_id))
+
 
         db.connection.disconnect()
         return _id
@@ -119,10 +139,11 @@ class UploadHandler(tornado.web.RequestHandler):
             newtag['content_type'] = self.request.files['file'][0]['content_type']
 
         # save it to the db and create a uri for the content
+        tag_id = self.save(newtag)
         try:
             print 'newtag will be created with the following information'
             print newtag
-            tag_id = self.save(newtag)
+
             context['tag_id'] = tag_id
         except BaseException, e:
             print 'there was an error from mongo:'
@@ -145,15 +166,19 @@ def jsonify(record):
     js = json.dumps(record)
     return js
 
-def printqr(img_data):    
+def printqr(img_data, tag_id):    
     # generate the command to print the file. subprocess takes a list
-    # of arguments, hence the call to split()
-    tmpfile = '/tmp/qrcode.png'
+    # of arguments, hence the call to split()    
+    tmpfile = '/tmp/%s.png' % tag_id
     fp = open(tmpfile, 'w')
     fp.write(img_data)
     fp.close()
-    print_file = 'lp -d LabelWriter-450-Turbo -o scaling=100 -o position=center'.split() + [tmpfile]
-    subprocess.call(print_file)
+    if settings['printing'] == 'enabled':
+        print 'printing qr code...'
+        print_file = 'lp -d LabelWriter-450-Turbo -o scaling=100 -o position=center'.split() + [tmpfile]
+        subprocess.call(print_file)
+    else:
+        print 'printing disabled. however, tmp file was created: %s' % tmpfile
 
 def force_mobile(request):
     agent = request.headers.get('User-Agent', "")
@@ -174,14 +199,16 @@ class APIUploadHandler(UploadHandler):
 class WebUploadHandler(UploadHandler):
     def post_processing(self, tag_id):
 
-        # generate the qr code and send it to printer
-        qr_url = create_qr(tag_uri(tag_id), width=settings['labelx'], height=settings['labely'])
-        fp = urllib2.urlopen(qr_url)
-        qr_data = fp.read()        
-        printqr(qr_data)
-        self.set_secure_cookie("created", "true")
-        # show the user their newly created story page
-        self.redirect('/tag/%s' % str(tag_id))
+        # if this is a new tag, generate the qr code and send it
+        # to printer
+        if not self.get_argument('id', None):
+            qr_url = create_qr(tag_uri(tag_id), width=settings['labelx'], height=settings['labely'])
+            fp = urllib2.urlopen(qr_url)
+            qr_data = fp.read()        
+            print 'calling printqr...'
+            printqr(qr_data, tag_id)
+        # redirect to the story page
+        self.redirect('/tag/%s' % tag_id)
 
 def tag_uri(tag_id):
     uri = settings['root_url'].strip('/') + '/tag/' + str(tag_id)
@@ -233,10 +260,26 @@ class WebViewHandler(ViewHandler):
         tag_id = str(record['_id'])
         context = { 'qr_url' : create_qr(tag_uri(tag_id), width=settings['qrx'], height=settings['qry']) }
         context['record'] = record
-        
-        if self.get_secure_cookie("created") == "true":
+
+        # update our cookie to remove information about this tags
+        # status if it exists
+        print 'cookie called created'
+        print self.get_secure_cookie("created")
+        print 'cookie called updated'
+        print self.get_secure_cookie("updated")
+
+        marker = "[%s]" % tag_id
+        if self.get_secure_cookie("created").find(marker) >= 0:
             context['message'] = "Your QR code has been sent to the printer!"
-            self.set_secure_cookie("created", "false")
+            self.set_secure_cookie("created", self.get_secure_cookie("created").replace(marker,""))
+        elif self.get_secure_cookie("updated").find(marker) >= 0:
+            context['message'] = "This story has been updated"
+            self.set_secure_cookie("updated", self.get_secure_cookie("updated").replace(marker,"")) 
+
+        print 'cookie called created'
+        print self.get_secure_cookie("created")
+        print 'cookie called updated'
+        print self.get_secure_cookie("updated")
             
         self.render('templates/view.html', context=context, force_mobile = force_mobile(self.request))        
 

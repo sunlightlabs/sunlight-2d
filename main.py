@@ -6,8 +6,8 @@
 
 # todo
 # "see all" view (all qr codes)
+# display error message on index page if it exists
 # add support for appending to existing tag/story
-# printing!
 # add timezone to datetime in response
 
 import tornado.httpserver
@@ -29,6 +29,11 @@ class MainHandler(tornado.web.RequestHandler):
         # get most recent stories
         tbl = pymongo.Connection()[settings['database']][settings['table']]
         recent = [record for record in tbl.find({"last_updated": {"$exists": True}}).sort("last_updated", pymongo.DESCENDING).limit(4)]
+
+        # check for any error messages
+        if self.get_secure_cookie("message"):
+            message = self.get_secure_cookie("message")
+
         self.render('templates/index.html', recent=recent, truncate_words=truncate_words, force_mobile = force_mobile(self.request))
 
 def truncate_words(input_string, length, max_chars=None):
@@ -55,6 +60,7 @@ class UploadHandler(tornado.web.RequestHandler):
 
     def save(self, thistag):
         db = pymongo.Connection()[settings['database']]
+        table = db[settings['table']]
 
         # if there's a file, store it in s3 and replace the file body
         # with the s3 url
@@ -64,27 +70,35 @@ class UploadHandler(tornado.web.RequestHandler):
             f = s3open(file_url, settings['S3_KEY'], settings['S3_SECRET'])
             f.write(thistag['file'])
             f.close()
-            thistag['file'] = file_url
-
-        # create 'contents' as a list of items; people may append
-        # content to existing tags
+            thistag['file'] = file_url    
         thistag['created'] = datetime.datetime.now()
-        tag = {'contents': [thistag,],
-               # last_updated will be updated each time a new item is
-               # added to this story
-               'last_updated' : thistag['created'], 
-               'created' : thistag['created'],
-               }        
-        table = db[settings['table']]
-        _id = table.insert(tag, safe=True)
+
+        if not thistag.get('id', None):
+            # create 'contents' as a list of items; people may append
+            # content to existing tags
+            tag = {'contents': [thistag,],
+                   # last_updated will be updated each time a new item is
+                   # added to this story
+                   'last_updated' : thistag['created'], 
+                   'created' : thistag['created'],
+                   }        
+            _id = table.insert(tag, safe=True)
+
+        else:
+            _id = pymongo.objectid.ObjectId(thistag.get('id'))
+            record = table.find_one({'_id': _id})
+            # this is totally not the best way to do this; should
+            # design thistag data structure better...
+            del thistag['id']
+            record['contents'].append(thistag)
+            record['last_updated'] = thistag['created']
+            table.save(record)
+
         db.connection.disconnect()
         return _id
 
     def post(self):
         context = {}
-        # arguments is a dict of key:value pairs where each value is a
-        # list (even if there is only one item). 
-        form = self.request.arguments
 
         # make sure the user submitted at least one of the fields:
         if self.get_argument('body', "") == "" and not self.request.files.get('file', None):
@@ -94,6 +108,9 @@ class UploadHandler(tornado.web.RequestHandler):
 
         # build the new tag
         newtag = {}
+        if self.get_argument('id', None):
+            newtag['id'] = self.get_argument('id')
+
         if self.get_argument('body', None):
             newtag['body'] = self.get_argument('body')
 
@@ -215,7 +232,7 @@ class WebViewHandler(ViewHandler):
     def post_processing(self, record):
         tag_id = str(record['_id'])
         context = { 'qr_url' : create_qr(tag_uri(tag_id), width=settings['qrx'], height=settings['qry']) }
-        context['tag_items'] = record['contents']                
+        context['record'] = record
         
         if self.get_secure_cookie("created") == "true":
             context['message'] = "Your QR code has been sent to the printer!"
@@ -233,8 +250,8 @@ class APIViewHandler(ViewHandler):
 # application settings here; private or local settings in
 # local_settings.py
 settings = {
-    'qrx' : 100, #pixels
-    'qry' : 100, #pixels,
+    'qrx' : 150, #pixels
+    'qry' : 150, #pixels,
     'labelx': 200, 
     'labely': 200,
 }    

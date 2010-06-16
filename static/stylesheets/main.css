@@ -48,6 +48,8 @@ a.moreLink { margin-top: 30px; font-size: 120%; font-family: Georgia, Times New 
 
 h2 { font-size: 220%; text-transform: uppercase; margin-bottom: 35px; color: #237e8e;}
 
+h3 { font-size: 150%; text-transform: uppercase; margin-bottom: 35px; color: #237e8e;}
+
 label { font-size: 120%; display: block; margin-bottom: 10px; float: left; width: 145px;}
 input, textarea { border: 1px dashed #d1cbc6; -moz-border-radius: 3px; -webkit-border-radius: 3px; width: 270px; padding: 10px;}
 
@@ -61,6 +63,6 @@ ul li { margin-bottom: 15px;}
 #message {color: red; padding-bottom: 20px; font-size: 120%; padding: 10px 15px; background-color: #F2E7CC; border: dashed 1px #E4B123; -moz-border-radius: 3px; -webkit-border-radius: 3px; width: 560px; display: block;}
 #spacer {height: 30px; margin-bottom: 20px;}
 .timestamp { font-size: 80%; font-style: oblique; margin-top: 15px; text-decoration: none; display: block;}
-
+#append {padding-top:30px; margin-top: 10px;}
 
 .clear{ clear: both;}

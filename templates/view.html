@@ -24,10 +24,10 @@ $(function() {
 		{% end %}
    	      </div>
 
-                {% for item in context['tag_items'] %}
-                
+                {% for item in context['record']['contents'] %}
+              <div class="tagitem">
                   {% if item.get('file', None) %}
-                    <img src="{{ item['file'] }}"</p>
+                    <img src="{{ item['file'] }}">
                   {% end %}
                   
                   {% if item.get('body', None) %}
@@ -35,8 +35,30 @@ $(function() {
                       {{ item['body'] }}
                     </p>
                   {% end %}
-                
+	      </div>  
                 {% end %}
+	      <div id="append">
+                <h3>Add a New Chapter to this Story...</h3>
+                <form action="/upload" method="post" enctype="multipart/form-data">
+		  <input type="hidden" name="id" value="{{ str(context['record']['_id']) }}" >
+                    <ul>
+                        <li>
+                            <label>Attach Text</label>
+                            <textarea rows="5" cols="32" name="body"></textarea>
+                        </li>
+                        <li>
+                            <span class="helperText">and/or</span>
+                            <label>Upload an Image</label>
+                            <input type="file" name="file" />
+                        </li>
+                        <li>
+                          <button class="printBtn" type="submit">
+                                <span>Append</span>
+                            </button>
+                        </li>    
+                    </ul>
+                </form>
+	      </div>
                 
             </div>  
             <div id="rtColumn">
